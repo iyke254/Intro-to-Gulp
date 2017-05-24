@@ -16,6 +16,7 @@ var browserify = require('browserify');
 var source = require('vinyl-source-stream');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var jshint = require('gulp-jshint');
 var browserSync = require('browser-sync').create();
 
 var buildProduction = utilities.env.production;
@@ -45,6 +46,7 @@ gulp.task('serve', function() {
   });
   gulp.watch(['js/*.js'], ['jsBuild']);
   gulp.watch(['bower.json'], ['bowerBuild']);
+  gulp.watch(['*.html'], ['htmlBuild']);
 });
 
 gulp.task('bowerBuild', ['bower'], function(){
@@ -52,6 +54,10 @@ gulp.task('bowerBuild', ['bower'], function(){
 });
 
 gulp.task('jsBuild', ['jsBrowserify', 'jshint'], function(){
+  browserSync.reload();
+});
+
+gulp.task('htmlBuild', function() {
   browserSync.reload();
 });
 
@@ -100,4 +106,10 @@ gulp.task("build", function(){
   } else {
     gulp.start('jsBrowserify');
   }
+});
+
+gulp.task('jshint', function(){
+  return gulp.src(['js/*.js'])
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'));
 });
